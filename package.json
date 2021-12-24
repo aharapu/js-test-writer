@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/parser": "^7.16.6",
-    "@babel/plugin-syntax-jsx": "^7.16.5"
+    "@babel/parser": "^7.16.6"
   }
 }
