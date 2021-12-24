@@ -1,17 +1,18 @@
-import React from 'react';
+// import React from 'react';
 
-const MainComponent = () => {
-    const nr = Math.random();
+// const MainComponent = () => {
+//     const nr = Math.random();
 
-    return (
-        <div>
-            <span>text content</span>
-            <SubComponent />
-        </div>
-    )
-}
+//     return (
+//         <div>
+//             <span>text content</span>
+//             <SubComponent />
+//             <ShortComponent />
+//         </div>
+//     )
+// }
 
-function SubComponent() {
+// function SubComponent() {
 
 }
 
@@ -20,3 +21,5 @@ export const WrapperComponent = () => {
 
     return <MainComponent {...props} />
 }
+
+const ShortComponent = () => <div>i am short</div>

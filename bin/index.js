@@ -1,5 +1,18 @@
 #! /usr/bin/env node
 
+/* 
+TODO -> investigate error. occurs when trying to execute the makejstests script from the console
+apparently a "windows only" error, and the tool works great in GitBash
+
+makejstests : File C:\Users\hpome\AppData\Roaming\npm\makejstests.ps1 cannot be loaded because running scripts is disabled on this system. For more 
+information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ makejstests FunctionComponent.js
++ ~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
+    + FullyQualifiedErrorId : UnauthorizedAccess
+*/
+
 // TODO -> find a way to configure the cli's indentation, if it should use semicolons etc;
 // TODO -> consider using a library for command input arguments (yargs)
 const fs = require('fs');
@@ -31,7 +44,7 @@ executionArguments.forEach(argument => {
 const buffer = fs.readFileSync(fileName);
 const code = buffer.toString();
 
-const syntaxTree = babelParser.parse(code, { plugins: ['jsx']});
+const syntaxTree = babelParser.parse(code, { plugins: ['jsx'], sourceType: "module"});
 const node = syntaxTree.program.body[0];
 node;
 
@@ -84,6 +97,11 @@ function checkNode(node) {
 checkNode(syntaxTree);
 
 console.log(testFileString);
+const fileNameSplitByDots = fileName.split('.');
+const fileExtension = fileNameSplitByDots.pop();
+fs.writeFileSync(`${process.cwd()}\\${fileNameSplitByDots.join('.')}.test.${fileExtension}`, testFileString);
+
+// TODO -> create a test file manager class ?
 
 function addFunctionDeclaration(node) {
   testFileString += indentation + `describe('${node.id.name}', () => {\n`;
