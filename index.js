@@ -1,24 +1,33 @@
 const fs = require('fs');
 const babelParser = require("@babel/parser");
-// const babel = require('@babel/core');
 
-const buffer = fs.readFileSync('./code-file.js');
+let tabSize = 2; // default tab size
+
+const fileName = process.argv[2] === 'runner' ? 'code-file.js' : process.argv[2]; // default file name present for Quokka to work during development
+console.log('file name ', fileName);
+
+const executionArguments = process.argv.slice(2);
+executionArguments.forEach(argument => {
+  const [name, value] = argument.split('=');
+  // TODO -> add some validators for names and values
+  switch (name) {
+    case 'tabSize':
+      tabSize = parseInt(value, 10);
+      break;
+    // TODO -> add an option to use spaces instead of tabs
+    default:
+      break;
+  }
+})
+
+const buffer = fs.readFileSync(fileName);
 const code = buffer.toString();
 
-// const result = babel.parseSync(code, )
 const syntaxTree = babelParser.parse(code, { plugins: ['jsx']});
-const node = syntaxTree.program.body[0];
-const declaration = node.declarations[0];
-const body = declaration.init.body;
-body
 
+let testFileString = '';
 
-let testFileString = ''; // add any imports at the top if necessary
-
-// todo -> make a recurring function that has program as the root node and traverses the tree
-// if the node has a body, call the recurring function on each
-const tabSize = 2; // todo -> make tabsize customizable
-let tabs = 0;
+let tabs = 0; // will increase to 0 when the recursion intiates
 let spaces = '';
 
 function increaseSpaces() {
@@ -47,21 +56,19 @@ function checkNode(node) {
         if (body.type === 'JSXElement') {
           // TODO -> write component specific test
         } else {
-          increaseSpaces();
           testFileString += spaces + `describe('${declaration.id.name}', () => {\n`;
           // TODO -> if it has a body, iterate and check its elements
           testFileString += spaces + `});\n`;
-          decreaseSpaces();
         }
       }
       break;
 
     case 'FunctionDeclaration':
-      increaseSpaces();
       testFileString += spaces + `describe('${node.id.name}', () => {\n`;
+      increaseSpaces();
       if (node?.body?.body) node.body.body.forEach(childNode => checkNode(childNode));
-      testFileString += spaces + `});\n`;
       decreaseSpaces();
+      testFileString += spaces + `});\n`;
       break;
   
     case 'File':
@@ -74,4 +81,4 @@ function checkNode(node) {
 
 checkNode(syntaxTree);
 
-testFileString
+console.log(testFileString);

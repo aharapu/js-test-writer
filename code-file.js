@@ -1,24 +1,23 @@
-// function motherFunc() {
-//   const a = 1;
+function motherFunc() {
+  const a = 1;
 
-//   function firstChildFunc() {
-//     let b = 2;
-//   }
+  function firstChildFunc() {
+    let b = 2;
+  }
 
-//   const secondChildFunc = (arg1) => {
-//     console.log(arg1);
-//   };
-// }
+  const secondChildFunc = (arg1) => {
+    console.log(arg1);
+  };
+}
 
-// function reactComponent(props) {
-//   const { prop } = props;
+function reactComponent(props) {
+  const { prop } = props;
 
-//   return <div>some html content</div>;
-// }
+  return <div>some html content</div>;
+}
 
-// function addTwoNumbers(a, b) {
-//   return a + b;
-// }
+function addTwoNumbers(a, b) {
+  return a + b;
+}
 
-// const arrowFuncWithoutClosure = (n) => (<div>some content</div>);
 const arrowFuncWithoutClosure = (n) => n*n;
