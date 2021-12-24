@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+// TODO -> find a way to configure the cli's indentation, if it should use semicolons etc;
+// TODO -> consider using a library for command input arguments (yargs)
 const fs = require('fs');
 const babelParser = require("@babel/parser");
 
@@ -20,7 +22,7 @@ executionArguments.forEach(argument => {
     case 'tabSize':
       tabSize = parseInt(value, 10);
       break;
-    // TODO -> add an option to use tabs instead of spaces
+    // TODO -> add an option to use tabs instead of indentation
     default:
       break;
   }
@@ -30,25 +32,24 @@ const buffer = fs.readFileSync(fileName);
 const code = buffer.toString();
 
 const syntaxTree = babelParser.parse(code, { plugins: ['jsx']});
-const declaration = syntaxTree.program.body[0].declarations[0];
-const body = declaration.init.body;
-body;
+const node = syntaxTree.program.body[0];
+node;
 
 let testFileString = '';
 
 let tabs = 0;
-let spaces = '';
+let indentation = '';
 
-function increaseSpaces() {
+function increaseIndentation() {
     tabs++;
     for (let j = 1; j <= tabSize; j++) {
-      spaces += ' ';
+      indentation += ' ';
     }
 }
 
-function decreaseSpaces() {
+function decreaseIndentation() {
   tabs--;
-  spaces = spaces.slice(0, spaces.length - tabSize);
+  indentation = indentation.slice(0, indentation.length - tabSize);
 }
 
 // TODO -> check if an export statement is correctly parsed
@@ -85,25 +86,54 @@ checkNode(syntaxTree);
 console.log(testFileString);
 
 function addFunctionDeclaration(node) {
-  testFileString += spaces + `describe('${node.id.name}', () => {\n`;
-  increaseSpaces();
-  if (node?.body?.body) node.body.body.forEach(childNode => checkNode(childNode));
-  decreaseSpaces();
-  testFileString += spaces + `});\n`;
+  testFileString += indentation + `describe('${node.id.name}', () => {\n`;
+  if (node.body.type === 'BlockStatement') {
+    traverseBlock(node.body);
+  }
+  testFileString += indentation + `});\n`;
 }
 
 function addArrowFunctionExpression(node) {
+  node;
+  const name = node.id.name;
   const body = node.init.body;
 
   if (body.type === 'JSXElement') {
-    // TODO -> write component specific test
+    writeReactComponentTest(name); // TODO -> split such helpers into openDescribeBlock(what to describe) + closeBlock()
   } else {
-    testFileString += spaces + `describe('${node.id.name}', () => {\n`;
+    testFileString += indentation + `describe('${name}', () => {\n`;
     if (body.type === 'BlockStatement') {
-      increaseSpaces();
+      increaseIndentation();
       body.body.forEach(childNode => checkNode(childNode));
-      decreaseSpaces();
+      decreaseIndentation();
+
+      // TODO -> return might be a JSX element, in which case a react component test must be written
     }
-    testFileString += spaces + `});\n`;
+    testFileString += indentation + `});\n`;
   }
+}
+
+// When an AST node is a block statement, it's body is an array of nodes
+function traverseBlock(node) {
+  increaseIndentation();
+  node.body.forEach(childNode => checkNode(childNode));
+  decreaseIndentation();
+}
+
+function print(text) {
+  testFileString += indentation + text;
+}
+
+function writeReactComponentTest(componentName) {
+  // TODO -> check if react and render imports are present, and if not, add them at the top
+  // use a helper function like addReactImports();
+  print(`describe('${componentName} component', () => {\n`);
+  increaseIndentation();
+  print(`it('renders without crashing', () => {\n`);
+  increaseIndentation();
+  print(`render(<${componentName} />)\n`);
+  decreaseIndentation();
+  print('});\n');
+  decreaseIndentation();
+  print('});\n');
 }
