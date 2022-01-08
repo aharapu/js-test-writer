@@ -1,13 +1,13 @@
 #! /usr/bin/env node
 
 /* 
-TODO -> investigate error. occurs when trying to execute the makejstests script from the console
+TODO -> investigate error. occurs when trying to execute the jtw script from the console
 apparently a "windows only" error, and the tool works great in GitBash
 
-makejstests : File C:\Users\hpome\AppData\Roaming\npm\makejstests.ps1 cannot be loaded because running scripts is disabled on this system. For more 
+jtw : File C:\Users\hpome\AppData\Roaming\npm\jtw.ps1 cannot be loaded because running scripts is disabled on this system. For more 
 information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
 At line:1 char:1
-+ makejstests FunctionComponent.js
++ jtw FunctionComponent.js
 + ~~~~~~~~~~~
     + CategoryInfo          : SecurityError: (:) [], PSSecurityException
     + FullyQualifiedErrorId : UnauthorizedAccess

@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "bin": {
-    "makejstests": "./bin/index.js"
+    "jtw": "./bin/index.js"
   },
   "author": "",
   "license": "MIT",
